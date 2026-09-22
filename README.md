@@ -27,18 +27,11 @@ Tasks enter through the console, IM, API, or Skill interfaces. AgentManager orch
 
 ## No. 1 on the GAIA Leaderboard
 
-**Our agent solution built on AgenticSearch achieved the No. 1 position on the GAIA leaderboard.**
+**Our agent solution built on AgenticSearch, Ops-Agentic-Search-2.0, achieved No. 1 on the GAIA Test leaderboard with 93.69% accuracy (Average score), as shown below.**
 
 GAIA evaluates general-purpose AI assistants on real-world tasks that require a combination of multi-step reasoning, information retrieval, multimodal understanding, and tool use. To address these challenges, we built our Self-Evolving Agents approach on the AgenticSearch execution framework, combining recursive improvement within a task, experience reuse across tasks, and verification and ensemble across agents to improve task-solving capabilities.
 
-> **Leaderboard screenshot: to be added.**
-
-<!--
-Placeholder for the GAIA leaderboard screenshot.
-Once the actual screenshot is available, replace the placeholder above with an image reference, for example:
-![AgenticSearch ranked No. 1 on the GAIA leaderboard](gaia-leaderboard.png)
-Also add the leaderboard date, evaluation split or track, submission name, score, and leaderboard link.
--->
+![Ops-Agentic-Search-2.0 ranked No. 1 on the GAIA Test leaderboard with 93.69% accuracy](gaia-leaderboard.png)
 
 ## Self-Evolving Agents
 

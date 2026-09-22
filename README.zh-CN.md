@@ -27,18 +27,11 @@ AgenticSearch 以 **AgentLoop 执行闭环**为核心，将任务编排、长短
 
 ## GAIA 榜单 Top 1
 
-**我们基于 AgenticSearch 构建的智能体方案，在 GAIA 榜单上取得了 Top 1 的成绩。**
+**我们基于 AgenticSearch 构建的智能体方案 Ops-Agentic-Search-2.0，以 93.69% 的准确率（Average score）取得 GAIA Test 榜单 Top 1，成绩如下图所示。**
 
 GAIA 面向真实世界任务评估通用 AI 助手，要求系统综合运用多步推理、信息检索、多模态理解与工具调用等能力。围绕这类复杂任务，我们在 AgenticSearch 的执行框架上构建了 Self-Evolving Agents 方案，通过任务内递归改进、跨任务经验复用与跨 Agent 验证集成，提升任务求解能力。
 
-> **榜单截图：待补充。**
-
-<!--
-GAIA 榜单截图预留位置。
-收到真实截图后，将上方占位文字替换为图片引用，例如：
-![AgenticSearch 在 GAIA 榜单上取得 Top 1](gaia-leaderboard.png)
-届时一并补充榜单日期、评测集或赛道、提交名称、分数及榜单链接。
--->
+![Ops-Agentic-Search-2.0 以 93.69% 的准确率取得 GAIA Test 榜单 Top 1](gaia-leaderboard.png)
 
 ## Self-Evolving Agents 自进化方案
 
