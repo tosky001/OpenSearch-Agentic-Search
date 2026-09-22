@@ -1,94 +1,79 @@
-# Self-Evolving Agents
+# AgenticSearch
 
 **English** | [简体中文](README.zh-CN.md)
 
-Agents that improve recursively during execution, build reusable skills across tasks, and verify answers through collaboration.
+**AgenticSearch is an enterprise AI agent product developed by the Alibaba Cloud OpenSearch team.** It combines information retrieval, reasoning, planning, and tool execution for complex business scenarios such as **deep research, operations diagnostics, data insights, and shopping assistance**. Users describe their goals, and AgenticSearch brings together enterprise knowledge and web information to break down tasks, invoke tools, and adapt its approach based on execution feedback, delivering research reports, data insights, or actionable results.
 
-Self-Evolving Agents is a three-layer framework built around **intra-trajectory recursive self-improvement, cross-task skill accumulation, and cross-agent verification and ensemble**. It connects execution traces, verification results, and reusable skills to explore how agents can use feedback from real tasks to improve their problem-solving process over time.
+[**Try AgenticSearch →**](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session) · [**Product Documentation →**](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search)
 
-> **Project status:** This repository currently shares the framework design and architecture diagrams. Implementation code will be open-sourced and added in future updates. Runnable code and installation instructions are not available at this stage.
+> This repository introduces the technical architecture behind AgenticSearch and our Self-Evolving Agents approach. Implementation code will be released progressively.
 
-## Why Self-Evolution?
+## Technical Architecture
 
-Complex tasks often require multiple rounds of reasoning, tool use, and result checking. Recording and distilling errors, corrections, and effective approaches from one execution can provide useful experience for later tasks. A single problem may also produce several candidate answers that need further verification and integration.
+AgenticSearch centers on the **AgentLoop execution cycle**, coordinating task orchestration, long- and short-term memory, skill accumulation, multimodal knowledge retrieval, and sandboxed tool execution to support the complete path from task intake to result delivery.
 
-The framework addresses these challenges at three levels:
+![AgenticSearch architecture: execution feedback loop, self-updating long- and short-term memory, AutoSkill, multimodal enterprise knowledge integration, and sandboxed execution](agenticsearch-framework-zh.png)
 
-- **Within a trajectory:** Use recursive self-improvement to diagnose execution trajectories, verify answers, and refine the execution context.
-- **Across tasks:** Mine recurring patterns from execution traces and distill reusable skills or tools.
-- **Across agents:** Verify candidate answers from multiple perspectives, then combine the results through a heterogeneous ensemble.
+Tasks enter through the console, IM, API, or Skill interfaces. AgentManager orchestrates tasks and persists their state, while ControlPlane manages prompts and tool configuration. AgentLoop loads relevant memory, skills, and context on demand, then plans, makes decisions, and invokes tools. Execution results inform the next round of decisions, while progress is streamed back through SSE. Task traces also drive memory updates and skill refinement, allowing experience to benefit future tasks.
 
-Here, self-evolution takes the form of improved execution strategies, accumulated and reused skills, and the verification and integration of candidate answers.
+### Technical Strengths
 
-## Architecture
+- **Feedback-driven complex task solving:** AgentLoop connects context loading, reasoning, and execution, adjusting subsequent steps based on tool outputs and intermediate results to support tasks that span multiple steps and tools.
+- **Self-updating long- and short-term memory:** AgenticMemory combines long-term user profiles with short-term conversational context. It loads relevant memory on demand and continually updates and consolidates it from task traces, enabling context reuse across conversations and tasks.
+- **Experience-driven skill evolution:** AutoSkill follows a cycle of skill extraction, evaluation and admission, publication and reuse, and execution feedback. It turns task experience into reusable skills so that future tasks can apply validated methods.
+- **Multimodal enterprise knowledge integration:** PageIndex indexes both document structure and content across text, tables, images, and code. Context expansion and rich-text reconstruction preserve the context surrounding evidence. AgenticWiki captures knowledge, methodologies, and task experience; retrieval across source documents and Wiki entries provides traceable citations.
+- **Controlled tool execution:** Sandbox hosts web search, multimodal knowledge retrieval, browser, code, terminal, and file tools, with isolated execution and access control. SandboxManager handles lifecycle management, supporting coordinated tool use in complex tasks.
+- **On-demand enterprise integration:** Connectors to OpenSearch, Elasticsearch, DingTalk and Feishu documents, and external capabilities such as DataWorks and DMS Data Agent bring existing enterprise data and tools into the task execution workflow.
 
-![Self-Evolving Agents three-layer architecture](architecture.png)
+## No. 1 on the GAIA Leaderboard
+
+**Our agent solution built on AgenticSearch achieved the No. 1 position on the GAIA leaderboard.**
+
+GAIA evaluates general-purpose AI assistants on real-world tasks that require a combination of multi-step reasoning, information retrieval, multimodal understanding, and tool use. To address these challenges, we built our Self-Evolving Agents approach on the AgenticSearch execution framework, combining recursive improvement within a task, experience reuse across tasks, and verification and ensemble across agents to improve task-solving capabilities.
+
+> **Leaderboard screenshot: to be added.**
+
+<!--
+Placeholder for the GAIA leaderboard screenshot.
+Once the actual screenshot is available, replace the placeholder above with an image reference, for example:
+![AgenticSearch ranked No. 1 on the GAIA leaderboard](gaia-leaderboard.png)
+Also add the leaderboard date, evaluation split or track, submission name, score, and leaderboard link.
+-->
+
+## Self-Evolving Agents
+
+Self-evolution uses **execution feedback to improve the current task, task experience to strengthen future tasks, and verification across agents to improve the reliability of the final answer**. The approach connects execution, answer verification, and experience accumulation at three levels: within a trajectory, across tasks, and across agents.
+
+![Self-Evolving Agents: recursive self-improvement, experience-driven AutoSkill augmentation, and cross-agent verification and ensemble](architecture.png)
 
 ### A. Recursive Self-Improvement
 
-**Intra-Trajectory**
+**Recursive Self-Improvement · Intra-Trajectory**
 
-A task is distributed to Agent A, Agent B, Agent C, and potentially additional agents. Each agent runs its own recursive self-improvement loop, and verified candidate answers enter the shared candidate pool.
+For a given task, multiple agents each run a recursive self-improvement loop. An execution agent produces an execution trace and a candidate answer, while an evaluation agent performs **trajectory diagnosis and answer verification**. If verification fails, the causes of the errors are summarized and incorporated into the execution context to guide the next attempt.
 
-The diagram shows the parallel agent paths above and expands their common internal mechanism below:
-
-1. **Task execution:** The execution agent performs the task and produces an execution trajectory and a candidate answer.
-2. **Evaluation:** The evaluation agent diagnoses the trajectory and verifies the answer.
-3. **Context refinement:** If verification fails and execution attempts remain, error causes are summarized and loaded into the execution agent's context. The agent then executes the task again with the refined context.
-
-The loop terminates when the answer passes verification or the maximum number of execution attempts is reached. Reaching the attempt limit does not imply that the answer has passed verification.
+The loop terminates when the answer passes verification or the maximum number of execution attempts is reached. Verified candidates proceed to the subsequent verification and ensemble stage; reaching the attempt limit does not mean an answer has been verified. This mechanism turns evaluation feedback into concrete context improvements, helping each retry address previously identified problems.
 
 ### B. Experience-Driven AutoSkill Augmentation
 
-**Cross-Task**
+**Experience-Driven AutoSkill Augmentation · Cross-Task**
 
-This layer turns experience from multiple tasks into reusable capabilities. AutoSkill refers to the mechanism for distilling, validating, and accumulating skills from execution traces.
+AutoSkill transforms execution traces from multiple tasks into reusable skills and tools, allowing experience to accumulate and transfer across tasks.
 
-| Stage | Purpose |
-| --- | --- |
-| Trace Pooling & Clustering | Collect task execution records and group similar traces for pattern analysis. |
-| Recurring Pattern Mining | Identify recurring problems, procedures, or effective approaches across tasks. |
-| Skill / Tool Distillation | Turn reusable experience into skills or tools. |
-| Cross-Task Validation | Evaluate the applicability of the distilled capabilities across different tasks. |
-| Skill Library | Store validated skills for reuse in future tasks. |
+**Trace pooling and clustering → Recurring pattern mining → Skill / tool distillation → Cross-task validation → Skill library**
 
-The two dashed connections link task execution with skill accumulation:
+Runtime Feedback continuously supplies execution steps, tool calls, errors, and verification outcomes. Skills that pass cross-task validation are stored in the skill library and applied to subsequent tasks through Skill Reuse. New execution feedback drives further refinement, creating a loop from experience distillation to validation in use.
 
-- **Runtime Feedback:** Send trace information, such as execution steps, tool calls, errors, reflections, and verification results, into the pooling and clustering process.
-- **Skill Reuse:** Apply capabilities accumulated in the skill library to later task executions.
+### C. Cross-Agent Verification and Heterogeneous Ensemble
 
-This process allows experience from one task to contribute to work on other tasks.
+**Cross-Agent · Verification & Heterogeneous Ensemble**
 
-### C. Cross-Agent: Verification & Heterogeneous Ensemble
+Candidate answers from multiple agents are collected in a shared pool and grouped into different verification views. Each view independently verifies the candidates, and a second-stage heterogeneous ensemble combines the results into the final answer, reducing reliance on a single solution path.
 
-Candidate answers from different agents first enter a candidate pool. Different combinations then form multiple verification views. The diagram illustrates three views:
-
-| Verification view | Candidate combination | Verification result |
-| --- | --- | --- |
-| View 1 | A, B, C | V₁ |
-| View 2 | A, C, D | V₂ |
-| View 3 | B, D, E | V₃ |
-
-Each view verifies its candidate answers. The resulting V₁, V₂, and V₃ then enter a second-stage heterogeneous ensemble to produce the final answer. These combinations illustrate the mechanism; the number of candidates, view construction, and ensemble strategy will be specified in the future implementation.
-
-## How a Task Contributes to Self-Evolution
-
-1. **Execute and improve:** A task enters the execution layer. Each agent runs its own recursive self-improvement loop, and verified answers enter the candidate pool.
-2. **Verify and combine:** Candidate answers enter the pool, pass through multi-view verification and the heterogeneous ensemble, and yield a final answer.
-3. **Accumulate experience:** Execution traces enter the cross-task process as runtime feedback. Pattern mining, skill distillation, and cross-task validation contribute reusable capabilities to the skill library.
-4. **Reuse in later tasks:** New tasks use existing skills and generate further execution feedback.
-
-## Related Product
-
-Try **Agentic Search** from Alibaba Cloud OpenSearch, or read the product documentation to learn about its capabilities and usage.
-
-| Resource | Link |
-| --- | --- |
-| Product activation and trial | [Open the Agentic Search console](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session) |
-| Product documentation | [Agentic Search: AI-driven next-generation enterprise search (Chinese)](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search) |
+Together, these three levels support continuous improvement: **correct errors within the current task, reuse experience in future tasks, and combine results through verification from multiple perspectives.**
 
 ## Open-Source Progress
 
-The framework overview in English and Chinese and the architecture diagram are available now. Implementation code will be added in future updates, with usage documentation accompanying its release.
+This repository currently provides the product's technical architecture and self-evolution approach. Implementation code, usage guides, and examples will be added progressively.
 
-Use Issues to discuss the design, ask questions, or share application scenarios you would like to explore.
+We welcome discussions, questions, and use cases through Issues.
