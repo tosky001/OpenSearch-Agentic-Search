@@ -4,7 +4,7 @@
 
 **AgenticSearch 是由阿里云 OpenSearch 团队开发的企业级智能体产品**，融合信息检索、推理规划与工具执行能力，面向**深度研究、运维诊断、数据洞察、电商导购**等复杂业务场景。用户只需描述任务目标，AgenticSearch 即可结合企业知识与联网信息，自主拆解任务、调用工具，并根据执行反馈调整求解过程，交付分析报告、数据洞察或可执行的处理结果。
 
-[**产品开通与体验 →**](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session) · [**产品说明文档 →**](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search)
+[**产品说明文档 →**](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search) · [**产品开通与体验 →**](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session)
 
 > 当前仓库介绍 AgenticSearch 背后的技术架构与 Self-Evolving Agents 自进化方案，相关实现代码将在后续逐步开源。
 

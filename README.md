@@ -4,7 +4,7 @@
 
 **AgenticSearch is an enterprise AI agent product developed by the Alibaba Cloud OpenSearch team.** It combines information retrieval, reasoning, planning, and tool execution for complex business scenarios such as **deep research, operations diagnostics, data insights, and shopping assistance**. Users describe their goals, and AgenticSearch brings together enterprise knowledge and web information to break down tasks, invoke tools, and adapt its approach based on execution feedback, delivering research reports, data insights, or actionable results.
 
-[**Try AgenticSearch →**](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session) · [**Product Documentation →**](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search)
+[**Product Documentation →**](https://help.aliyun.com/zh/open-search/search-platform/product-overview/agentic-search-ai-driven-next-generation-enterprise-search) · [**Try AgenticSearch →**](https://opensearch.console.aliyun.com/cn-shanghai/agentic-search#/agent/session)
 
 > This repository introduces the technical architecture behind AgenticSearch and our Self-Evolving Agents approach. Implementation code will be released progressively.
 
